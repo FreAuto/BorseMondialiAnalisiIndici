@@ -1,0 +1,89 @@
+MISURE DAX – Borsa Mondiale Dashboard 📈
+Tabelle: aree, vista, indici, prezzi (fine settimana), annui, crisi
+Filtri: aree[area] (America, Europa, Asia) e vista[vista] (Valuta locale, Euro)
+Collegamenti: aree <- indici <- prezzi / annui / crisi
+
+Vista Scelta   (tabella vista) =
+    SELECTEDVALUE ( vista[vista], "Valuta locale" )
+
+N Indici   (tabella indici) =
+    COUNTROWS ( indici )
+    formato: 0
+
+Colore Indice   (tabella indici) =
+    SELECTEDVALUE ( indici[colore], "#0F3D2E" )
+
+Crescita Totale   (tabella indici) =
+    IF ( SELECTEDVALUE ( vista[vista], "Valuta locale" ) = "Euro",
+         AVERAGE ( indici[crescita_eur_pct] ),
+         AVERAGE ( indici[crescita_pct] ) ) / 100
+    formato: +#,##0%;-#,##0%
+
+Crescita Locale   (tabella indici) =
+    AVERAGE ( indici[crescita_pct] ) / 100
+    formato: +#,##0%;-#,##0%
+
+Crescita in Euro   (tabella indici) =
+    AVERAGE ( indici[crescita_eur_pct] ) / 100
+    formato: +#,##0%;-#,##0%
+
+Crescita Annua   (tabella indici) =
+    IF ( SELECTEDVALUE ( vista[vista], "Valuta locale" ) = "Euro",
+         AVERAGE ( indici[crescita_annua_eur_pct] ),
+         AVERAGE ( indici[crescita_annua_pct] ) ) / 100
+    formato: +0.0%;-0.0%
+
+Volatilita   (tabella indici) =
+    AVERAGE ( indici[volatilita_annua_pct] ) / 100
+    formato: 0.0%
+
+Caduta Massima   (tabella indici) =
+    MIN ( indici[max_caduta_pct] ) / 100
+    formato: 0%
+
+Diecimila Euro   (tabella indici) =
+    10000 * ( 1 + AVERAGE ( indici[crescita_eur_pct] ) / 100 )
+    formato: #,##0" €"
+
+Distanza Record   (tabella indici) =
+    AVERAGE ( indici[distanza_record_pct] ) / 100
+    formato: 0.0%
+
+Anni in Positivo   (tabella indici) =
+    AVERAGE ( indici[anni_positivi] )
+    formato: 0" su 18"
+
+Correlazione SP500   (tabella indici) =
+    AVERAGE ( indici[corr_sp500] )
+    formato: 0.00
+
+Valore Base 100   (tabella prezzi) =
+    IF ( SELECTEDVALUE ( vista[vista], "Valuta locale" ) = "Euro",
+         AVERAGE ( prezzi[base100_eur] ),
+         AVERAGE ( prezzi[base100] ) )
+    formato: #,##0
+
+Sotto il Massimo   (tabella prezzi) =
+    AVERAGE ( prezzi[drawdown_pct] ) / 100
+    formato: 0%
+
+Rendimento Anno   (tabella annui) =
+    IF ( SELECTEDVALUE ( vista[vista], "Valuta locale" ) = "Euro",
+         AVERAGE ( annui[rend_eur_pct] ),
+         AVERAGE ( annui[rend_pct] ) ) / 100
+    formato: +0.0%;-0.0%
+
+Colore Rendimento   (tabella annui) =
+    IF ( [Rendimento Anno] >= 0, "#2E7D4F", "#B03A2E" )
+
+Caduta Crisi   (tabella crisi) =
+    AVERAGE ( crisi[caduta_pct] ) / 100
+    formato: 0%
+
+Mesi Recupero   (tabella crisi) =
+    AVERAGE ( crisi[mesi_recupero] )
+    formato: 0" mesi"
+
+📌 Con i pulsanti "Valuta locale / Euro" le misure scelgono la colonna giusta.
+📌 Le misure "Colore ..." danno il colore ai grafici (barre verdi e rosse, un colore per indice).
+📌 I nomi delle misure sono diversi dai nomi delle colonne.
